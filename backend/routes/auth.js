@@ -74,11 +74,11 @@ router.get('/user', auth, async (req, res) => {
 // @route   PUT api/auth/profile
 // @desc    Update user profile
 router.put('/profile', auth, async (req, res) => {
-  const { name, course, batch, company } = req.body;
+  const { name, course, batch, company, profile_pic } = req.body;
   try {
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { $set: { name, course, batch, company, updated_at: Date.now() } },
+      { $set: { name, course, batch, company, profile_pic, updated_at: Date.now() } },
       { new: true }
     ).select('-password');
     res.json(user);

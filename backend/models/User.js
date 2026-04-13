@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
   batch: { type: String },
   course: { type: String },
   company: { type: String },
+  profile_pic: { type: String }, // Base64 or URL
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now }
 });

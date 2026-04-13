@@ -9,7 +9,8 @@ export default function Profile() {
     batch: '',
     company: '',
     role: '',
-    institution_id: null
+    institution_id: null,
+    profile_pic: ''
   });
   const [institution, setInstitution] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +30,8 @@ export default function Profile() {
           batch: userData.batch || '',
           company: userData.company || '',
           role: userData.role || '',
-          institution_id: userData.institution_id
+          institution_id: userData.institution_id,
+          profile_pic: userData.profile_pic || ''
         });
 
         if (userData.institution_id) {
@@ -48,6 +50,21 @@ export default function Profile() {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 1000000) { // 1MB limit for Base64 efficiency
+          alert("Image is too large. Please select an image under 1MB.");
+          return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfile({ ...profile, profile_pic: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -55,6 +72,7 @@ export default function Profile() {
     try {
       const updateData = {
         name: profile.name,
+        profile_pic: profile.profile_pic
       };
 
       // Only include alumni fields for alumni
@@ -98,10 +116,21 @@ export default function Profile() {
             <section className="lg:col-span-4 space-y-6">
                 <div className="bg-white rounded-3xl p-8 flex flex-col items-center text-center shadow-sm border border-surface-container">
                     <div className="w-40 h-40 rounded-full overflow-hidden mb-6 border-8 border-surface-container-lowest shadow-2xl bg-surface-container flex items-center justify-center relative">
-                        <span className="material-symbols-outlined text-[80px] text-outline opacity-40">person</span>
-                        <button className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-lg">
+                        {profile.profile_pic ? (
+                            <img src={profile.profile_pic} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                            <span className="material-symbols-outlined text-[80px] text-outline opacity-40">person</span>
+                        )}
+                        <label htmlFor="profile-upload" className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-lg cursor-pointer hover:scale-110 active:scale-95 transition-all">
                             <span className="material-symbols-outlined text-sm">camera_alt</span>
-                        </button>
+                            <input 
+                              id="profile-upload" 
+                              type="file" 
+                              accept="image/*" 
+                              className="hidden" 
+                              onChange={handleImageChange}
+                            />
+                        </label>
                     </div>
                     <h3 className="text-2xl font-black text-on-surface">{profile.name || "Set Your Name"}</h3>
                     <p className="text-xs font-bold text-on-surface-variant uppercase tracking-[0.2em] mt-1">{profile.role.replace('_', ' ')}</p>

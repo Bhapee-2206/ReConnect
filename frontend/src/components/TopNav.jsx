@@ -52,8 +52,15 @@ export default function TopNav({ user, profile }) {
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
             <p className="text-xs font-bold text-on-surface">{displayName}</p>
+            <button onClick={handleLogout} className="text-[10px] font-black uppercase text-primary hover:text-indigo-600 transition-colors">Logout</button>
           </div>
-          <button onClick={handleLogout} className="ml-2 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors">Logout</button>
+          <div className="w-10 h-10 rounded-full border-2 border-surface-container overflow-hidden bg-surface-container-low flex items-center justify-center">
+             {profile?.profile_pic ? (
+                 <img src={profile.profile_pic} alt="Me" className="w-full h-full object-cover" />
+             ) : (
+                <span className="material-symbols-outlined text-outline opacity-40">person</span>
+             )}
+          </div>
         </div>
       </div>
     </header>

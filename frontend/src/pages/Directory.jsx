@@ -108,6 +108,13 @@ export default function Directory() {
           {alumni.map((person) => (
             <div key={person.id || person._id} className="group bg-surface-container-lowest rounded-[2rem] p-4 transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/10 editorial-shadow">
                 <div className="relative overflow-hidden rounded-2xl aspect-[4/5] mb-6 bg-slate-200">
+                    {person.profile_pic ? (
+                        <img src={person.profile_pic} alt={person.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-surface-container text-outline opacity-40">
+                            <span className="material-symbols-outlined text-6xl">person</span>
+                        </div>
+                    )}
                     <div className="absolute top-4 left-4 flex gap-2">
                         <span className="bg-tertiary-container text-tertiary-fixed text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">{person.role}</span>
                     </div>
