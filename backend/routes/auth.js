@@ -81,8 +81,11 @@ router.put('/profile', auth, async (req, res) => {
       { $set: { name, course, batch, company, profile_pic, updated_at: Date.now() } },
       { new: true }
     ).select('-password');
+    
+    console.log(`Profile updated for ${user.email}. Pic size: ${profile_pic ? profile_pic.length : 0}`);
     res.json(user);
   } catch (err) {
+    console.error("Profile update error:", err);
     res.status(500).send('Server Error');
   }
 });
