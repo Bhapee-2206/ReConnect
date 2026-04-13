@@ -15,6 +15,7 @@ export default function Profile() {
   const [institution, setInstitution] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
 
   const isAdmin = profile.role === 'college_admin' || profile.role === 'admin';
 
@@ -33,6 +34,7 @@ export default function Profile() {
           institution_id: userData.institution_id,
           profile_pic: userData.profile_pic || ''
         });
+        setPreviewImage(userData.profile_pic || '');
 
         if (userData.institution_id) {
           const instRes = await institutionService.getMy();
@@ -53,13 +55,15 @@ export default function Profile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 1000000) { // 1MB limit for Base64 efficiency
-          alert("Image is too large. Please select an image under 1MB.");
+      if (file.size > 2000000) { // Increased to 2MB
+          alert("Image is too large. Please select an image under 2MB.");
           return;
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfile({ ...profile, profile_pic: reader.result });
+        const result = reader.result;
+        setPreviewImage(result);
+        setProfile(prev => ({ ...prev, profile_pic: result }));
       };
       reader.readAsDataURL(file);
     }
@@ -94,35 +98,33 @@ export default function Profile() {
 
   return (
     <main className="flex-1 p-6 md:p-10 bg-surface-container-lowest">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
                 <h2 className="text-4xl font-black text-on-surface tracking-tighter">Profile Settings</h2>
                 <p className="text-on-surface-variant mt-2 max-w-2xl">
                     {isAdmin 
-                        ? "Manage your administrative identity and institutional oversight." 
-                        : "Manage your professional identity and how you appear to fellow alumni."}
+                        ? "Institution Control & Administrative Identity" 
+                        : "Professional Identity & Network Presence"}
                 </p>
             </div>
-            {isAdmin && (
-                <div className="bg-primary/10 border border-primary/20 px-4 py-2 rounded-2xl flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary text-sm">verified_user</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Certified Administrator</span>
-                </div>
-            )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            {/* Redesigned Profile Card */}
             <section className="lg:col-span-4 space-y-6">
-                <div className="bg-white rounded-3xl p-8 flex flex-col items-center text-center shadow-sm border border-surface-container">
-                    <div className="w-40 h-40 rounded-full overflow-hidden mb-6 border-8 border-surface-container-lowest shadow-2xl bg-surface-container flex items-center justify-center relative">
-                        {profile.profile_pic ? (
-                            <img src={profile.profile_pic} alt="Profile" className="w-full h-full object-cover" />
+                <div className="bg-white rounded-[2.5rem] p-8 flex flex-col items-center shadow-2xl shadow-indigo-500/5 border border-surface-container relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-primary to-indigo-600 opacity-10"></div>
+                    
+                    <div className="relative z-10 w-44 h-44 rounded-[2rem] overflow-hidden border-8 border-white shadow-xl bg-surface-container flex items-center justify-center group/img mt-4">
+                        {previewImage ? (
+                            <img src={previewImage} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
                             <span className="material-symbols-outlined text-[80px] text-outline opacity-40">person</span>
                         )}
-                        <label htmlFor="profile-upload" className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-lg cursor-pointer hover:scale-110 active:scale-95 transition-all">
-                            <span className="material-symbols-outlined text-sm">camera_alt</span>
+                        <label htmlFor="profile-upload" className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer backdrop-blur-[2px]">
+                            <span className="material-symbols-outlined text-3xl mb-1">photo_camera</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">Change Photo</span>
                             <input 
                               id="profile-upload" 
                               type="file" 
@@ -132,14 +134,27 @@ export default function Profile() {
                             />
                         </label>
                     </div>
-                    <h3 className="text-2xl font-black text-on-surface">{profile.name || "Set Your Name"}</h3>
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-[0.2em] mt-1">{profile.role.replace('_', ' ')}</p>
-                    
+
+                    <div className="text-center mt-8 space-y-2 relative z-10">
+                        <h3 className="text-2xl font-black text-on-surface tracking-tight leading-none">{profile.name || "Set Your Name"}</h3>
+                        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">{profile.role.replace('_', ' ')}</p>
+                    </div>
+
                     {institution && (
-                        <div className="mt-8 w-full p-4 bg-surface-container-low rounded-2xl text-left space-y-1">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-outline">Institution</span>
-                            <p className="text-xs font-bold text-on-surface truncate">{institution.name}</p>
+                        <div className="mt-10 w-full p-6 bg-surface-container-low rounded-3xl text-left border border-surface-container relative z-10">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                    <span className="material-symbols-outlined text-sm">hub</span>
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-outline">Network Base</span>
+                            </div>
+                            <p className="text-sm font-bold text-on-surface leading-snug">{institution.name}</p>
+                            <div className="mt-4 pt-4 border-t border-surface-container flex justify-between items-center">
+                                <span className="text-[9px] font-bold text-outline uppercase tracking-widest">Join Code</span>
+                                <span className="text-xs font-mono font-black text-primary">{institution.join_code}</span>
+                            </div>
                         </div>
+                    )}
                     )}
                 </div>
             </section>
