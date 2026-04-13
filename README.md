@@ -1,37 +1,93 @@
 # ReConnect – Alumni Engagement Platform (Node.js + MongoDB SaaS)
 
-The ReConnect platform has been transitioned to a full MERN stack (MongoDB, Express, React, Node.js) to support the multi-tenant SaaS architecture.
+ReConnect is a modern, multi-tenant alumni network platform designed for institutions to manage their alumni ecosystems. It supports role-based access for Admins and Alumni, featuring a unique **Join by Code** system for smooth alumni onboarding.
 
-## Tech Stack
-- **Frontend**: React (Vite), Tailwind CSS, Axios
-- **Backend**: Node.js, Express
-- **Database**: MongoDB Atlas
-- **Auth**: JWT (JSON Web Tokens) & Bcrypt
+---
 
-## Features
-- **Multi-Institution Support**: Independent data isolation for different colleges.
-- **Admin Dashboard**: For College Admins to invite alumni and manage announcements/events.
-- **Alumni Directory**: Filtered by batch, course, and company.
-- **Event Registration**: Secure multi-tenant event management.
+## 🛠️ Technology Stack
+- **Frontend**: React 19 (Vite), Tailwind CSS, Material Symbols
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB Atlas (Mongoose ODM)
+- **Authentication**: JWT (JSON Web Tokens) & Bcrypt for secure password hashing
 
-## Setup Instructions
+---
 
-### 1. Database & Environment
-- The backend is already configured to use the provided MongoDB Atlas URI.
-- Environment variables are located in `backend/.env`.
+## 🚀 Getting Started
 
-### 2. Running the Backend
-1. Navigate to the backend folder: `cd backend`
-2. Install dependencies: `npm install`
-3. Start the server: `node server.js`
-- The server will run on `http://localhost:5000`.
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- [NPM](https://www.npmjs.com/) (installed with Node.js)
 
-### 3. Running the Frontend
-1. Navigate to the frontend folder: `cd frontend`
-2. Install dependencies: `npm install`
-3. Start the Vite server: `npm run dev`
-- The application will be accessible at `http://localhost:5173` (or `5174`).
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Bhapee-2206/ReConnect.git
+cd ReConnect
+```
 
-## Security
-- All sensitive data is protected on the server side via custom JWT middleware.
-- Data isolation ensures users can only see records belonging to their specific institution.
+### 2. Backend Setup
+1.  Navigate to the backend directory:
+    ```bash
+    cd backend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Configure environment variables:
+    Check `backend/.env` and ensure the `MONGO_URI` and `JWT_SECRET` are present.
+4.  Start the server:
+    ```bash
+    node server.js
+    ```
+    *Terminal should display: "Server started on port 5000" and "MongoDB Connected..."*
+
+### 3. Frontend Setup
+1.  Open a **new** terminal in the root directory.
+2.  Navigate to the frontend directory:
+    ```bash
+    cd frontend
+    ```
+3.  Install dependencies:
+    ```bash
+    npm install
+    ```
+4.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+    *Navigate to the local URL provided (usually `http://localhost:5173`).*
+
+---
+
+## ✨ Key Features
+
+### For Institution Admins
+- **Institution Launch**: Easy onboarding to create a dedicated network for your college.
+- **Join Code System**: Generate a unique 8-character code to securely share with alumni.
+- **Member Management**: Track alumni registration and invite new members via email.
+- **Announcements & Events**: Create and manage institutional updates and upcoming events.
+
+### For Alumni Members
+- **Seamless Registration**: Join your specific institution using a shared Join Code.
+- **Professional Directory**: Search and filter fellow alumni by Batch Year, Course, or Company.
+- **Event Participation**: Browse upcoming institutional events and register with one click.
+- **Personal Profile**: Manage your professional details and contact information.
+
+---
+
+## 📸 Project Gallery
+High-quality screenshots and system diagrams (System Flow, Data Flow, ER, Use Case) are available in the repository:
+- Check the `gallery/` folder for all PNG assets.
+- View the full report in `reconnect_project_documentation.md`.
+
+---
+
+## 🔒 Security & Architecture
+- **JWT Middleware**: Every API request is authenticated to ensure data security.
+- **Multi-Tenancy**: Data is strictly isolated by `institution_id`, ensuring one college cannot access another's data.
+- **RESTful API**: Clean separation between the React frontend and Express backend.
+
+---
+
+## 📄 License
+© 2024 ReConnect Digital Systems. Final Year Project Submission.
