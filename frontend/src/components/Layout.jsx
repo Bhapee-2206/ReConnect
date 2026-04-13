@@ -39,6 +39,16 @@ export default function Layout() {
     getUser();
   }, [navigate, window.location.pathname]);
 
+  const refreshProfile = async () => {
+      try {
+          const response = await authService.getUser();
+          setUser(response.data);
+          setProfile(response.data);
+      } catch (err) {
+          console.error("Error refreshing profile:", err);
+      }
+  };
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading session...</div>;
   }
@@ -49,7 +59,7 @@ export default function Layout() {
       <main className="md:ml-60 w-full flex-1 flex flex-col min-h-screen transition-all duration-300">
         <TopNav user={user} profile={profile} />
         <div className="flex-1 pb-20 md:pb-0">
-          <Outlet context={{ user, profile }} />
+          <Outlet context={{ user, profile, refreshProfile }} />
         </div>
       </main>
       <BottomNav />

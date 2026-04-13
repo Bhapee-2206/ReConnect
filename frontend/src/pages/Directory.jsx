@@ -119,18 +119,15 @@ export default function Directory() {
                     <div className="absolute top-4 left-4 flex gap-2">
                         <span className="bg-tertiary-container text-tertiary-fixed text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">{person.role}</span>
                     </div>
-                    {profile?.role === 'college_admin' && (person._id || person.id) !== profile?.id && (
-                      <button 
-                        onClick={() => handleRemove(person._id || person.id)}
-                        className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-error-container text-on-error-container rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0"
-                      >
-                        <span className="material-symbols-outlined text-sm">person_remove</span>
-                      </button>
-                    )}
                 </div>
                 <div className="px-2 pb-2">
                     <h3 className="text-xl font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">{person.name || 'Unknown User'}</h3>
-                    <p className="text-on-surface-variant text-sm mt-1">{person.course || 'Alumnus'}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                        <span className="material-symbols-outlined text-[14px] text-primary">mail</span>
+                        <p className="text-on-surface-variant text-xs font-medium">{person.email}</p>
+                    </div>
+                    <p className="text-outline text-[11px] font-bold uppercase tracking-wider mt-2">{person.course || 'Alumnus'}</p>
+                    
                     <div className="mt-6 flex items-center justify-between border-t border-surface-container pt-4">
                         <div className="space-y-1">
                             <span className="block text-[9px] font-bold text-outline uppercase">Company</span>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { authService, institutionService } from '../services/api';
+import { useOutletContext } from 'react-router-dom';
 
 export default function Profile() {
+  const { refreshProfile } = useOutletContext();
   const [profile, setProfile] = useState({
     name: '',
     email: '',
@@ -16,8 +18,16 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const isAdmin = profile.role === 'college_admin' || profile.role === 'admin';
+
+  useEffect(() => {
+    if (showSuccess) {
+        const timer = setTimeout(() => setShowSuccess(false), 3000);
+        return () => clearTimeout(timer);
+    }
+  }, [showSuccess]);
 
   useEffect(() => {
     async function loadData() {
@@ -60,33 +70,33 @@ export default function Profile() {
         const img = new Image();
         img.onload = () => {
            // Create a canvas to resize/compress
-           const canvas = document.createElement('canvas');
-           const MAX_WIDTH = 400;
-           const MAX_HEIGHT = 400;
-           let width = img.width;
-           let height = img.height;
-
-           if (width > height) {
-             if (width > MAX_WIDTH) {
-               height *= MAX_WIDTH / width;
-               width = MAX_WIDTH;
-             }
-           } else {
-             if (height > MAX_HEIGHT) {
-               width *= MAX_HEIGHT / height;
-               height = MAX_HEIGHT;
-             }
-           }
-
-           canvas.width = width;
-           canvas.height = height;
-           const ctx = canvas.getContext('2d');
-           ctx.drawImage(img, 0, 0, width, height);
-           
-           // Convert to smaller Base64 (JPEG with 0.7 quality)
-           const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-           setPreviewImage(compressedBase64);
-           setProfile(prev => ({ ...prev, profile_pic: compressedBase64 }));
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800; // Increased for better quality
+            const MAX_HEIGHT = 800;
+            let width = img.width;
+            let height = img.height;
+ 
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+ 
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Convert to higher quality Base64
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.9);
+            setPreviewImage(compressedBase64);
+            setProfile(prev => ({ ...prev, profile_pic: compressedBase64 }));
         };
         img.src = reader.result;
       };
@@ -96,12 +106,14 @@ export default function Profile() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (saving) return; // Prevent multiple clicks
     setSaving(true);
     
     try {
+      // Use previewImage directly to ensure we have the latest processed image
       const updateData = {
         name: profile.name,
-        profile_pic: profile.profile_pic
+        profile_pic: previewImage // This is always the latest Base64 (or original URL)
       };
 
       // Only include alumni fields for alumni
@@ -111,9 +123,29 @@ export default function Profile() {
         updateData.company = profile.company;
       }
 
-      await authService.updateProfile(updateData);
-      alert("Profile updated successfully!");
+      console.log("Saving profile with data:", { ...updateData, profile_pic: updateData.profile_pic ? "Base64 string..." : "Empty" });
+      const res = await authService.updateProfile(updateData);
+      
+      // Update local profile state with server response to stay in sync
+      const userData = res.data;
+      setProfile({
+        name: userData.name || '',
+        email: userData.email,
+        course: userData.course || '',
+        batch: userData.batch || '',
+        company: userData.company || '',
+        role: userData.role || '',
+        institution_id: userData.institution_id,
+        profile_pic: userData.profile_pic || ''
+      });
+      setPreviewImage(userData.profile_pic || '');
+      
+      // Refresh the global context (Layout) to update Sidebar and TopNav
+      if (refreshProfile) refreshProfile();
+      
+      setShowSuccess(true);
     } catch (err) {
+      console.error("Save error:", err);
       alert("Error saving profile: " + (err.response?.data?.msg || "Server error"));
     }
     setSaving(false);
@@ -308,6 +340,24 @@ export default function Profile() {
                 </div>
             </section>
         </div>
+      </div>
+
+      {/* Success Popup */}
+      <div className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 transform ${showSuccess ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}>
+          <div className="bg-emerald-600 text-white px-8 py-4 rounded-[2rem] shadow-[0_20px_50px_rgba(16,185,129,0.3)] flex items-center gap-4 min-w-[320px] backdrop-blur-xl border border-white/20">
+              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-white">check_circle</span>
+              </div>
+              <div>
+                  <p className="text-xs font-black uppercase tracking-widest leading-none mb-1">Success</p>
+                  <p className="text-sm font-bold opacity-90">Profile synchronized successfully</p>
+              </div>
+              <div className="ml-auto pl-4">
+                  <div className="w-1 h-8 bg-white/10 rounded-full overflow-hidden">
+                      <div className={`h-full bg-white transition-all duration-[3000ms] ease-linear ${showSuccess ? 'w-full' : 'w-0'}`}></div>
+                  </div>
+              </div>
+          </div>
       </div>
     </main>
   );

@@ -35,11 +35,41 @@ export default function Dashboard() {
     loadStats();
   }, [profile]);
 
-  if (loading) return <div className="p-8">Loading dashboard...</div>;
-  if (!profile?.institution_id) return <div className="p-8">Institution not setup.</div>;
+  if (loading) return <div className="p-8 flex flex-col items-center justify-center min-h-[50vh] animate-pulse">
+    <div className="w-12 h-12 bg-primary/20 rounded-full mb-4"></div>
+    <div className="h-4 w-32 bg-surface-container rounded-full"></div>
+  </div>;
+
+  if (!profile?.institution_id) return <div className="p-8 text-center space-y-4">
+    <span className="material-symbols-outlined text-6xl text-outline opacity-20">domain_disabled</span>
+    <h3 className="text-xl font-bold">Institution not setup.</h3>
+    <p className="text-on-surface-variant">Please contact your administrator or join an institution.</p>
+  </div>;
+
+  const isAdmin = profile.role === 'college_admin' || profile.role === 'admin';
+  const isProfileIncomplete = !profile?.name || !profile?.profile_pic || (!isAdmin && (!profile?.course || !profile?.batch));
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-10">
+    <div className="p-6 max-w-6xl mx-auto space-y-8">
+      {isProfileIncomplete && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700">
+                    <span className="material-symbols-outlined">person_edit</span>
+                </div>
+                <div>
+                    <h4 className="text-sm font-black text-amber-900">Complete Your Professional Identity</h4>
+                    <p className="text-xs text-amber-800/80">Missing details like your profile picture or academic history make it harder for alumni to find you.</p>
+                </div>
+            </div>
+            <button 
+                onClick={() => navigate('/profile')}
+                className="px-5 py-2.5 bg-amber-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-amber-600/20 hover:bg-amber-700 transition-all flex-shrink-0"
+            >
+                Complete Now
+            </button>
+        </div>
+      )}
       {/* Welcome Hero Section */}
       <section className="relative overflow-hidden rounded-2xl bg-indigo-700 min-h-[260px] flex items-center p-8 text-white">
         <div className="relative z-10 max-w-xl space-y-4">

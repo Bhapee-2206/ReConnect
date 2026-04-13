@@ -76,17 +76,30 @@ router.get('/user', auth, async (req, res) => {
 router.put('/profile', auth, async (req, res) => {
   const { name, course, batch, company, profile_pic } = req.body;
   try {
+    // Create an update object with only provided fields
+    const updateFields = {};
+    if (name !== undefined) updateFields.name = name;
+    if (course !== undefined) updateFields.course = course;
+    if (batch !== undefined) updateFields.batch = batch;
+    if (company !== undefined) updateFields.company = company;
+    if (profile_pic !== undefined) updateFields.profile_pic = profile_pic;
+    updateFields.updated_at = Date.now();
+
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { $set: { name, course, batch, company, profile_pic, updated_at: Date.now() } },
+      { $set: updateFields },
       { new: true }
     ).select('-password');
     
-    console.log(`Profile updated for ${user.email}. Pic size: ${profile_pic ? profile_pic.length : 0}`);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    console.log(`Profile updated for ${user.email}. Pic status: ${profile_pic ? 'Image Provided (' + profile_pic.length + ' chars)' : 'No Image Change'}`);
     res.json(user);
   } catch (err) {
     console.error("Profile update error:", err);
-    res.status(500).send('Server Error');
+    res.status(500).json({ msg: 'Server Error', error: err.message });
   }
 });
 
