@@ -276,7 +276,7 @@ export default function Auth() {
 
       <footer className="fixed bottom-8 w-full text-center pointer-events-none opacity-40">
         <p className="text-[0.6rem] font-bold uppercase tracking-[0.4em] text-outline">
-          © 2024 ReConnect Digital Systems • Secure Protocol Activated
+          © 2026 ReConnect Digital Systems • Secure Protocol Activated
         </p>
       </footer>
     </div>

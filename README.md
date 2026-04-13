@@ -90,4 +90,4 @@ High-quality screenshots and system diagrams (System Flow, Data Flow, ER, Use Ca
 ---
 
 ## 📄 License
-© 2024 ReConnect Digital Systems. Final Year Project Submission.
+© 2026 ReConnect Digital Systems.
