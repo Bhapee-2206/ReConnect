@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  html {
+    font-size: 14px;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+  h1 { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.025em; }
+  h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.025em; }
+}
+
+@layer utilities {
+  .editorial-shadow {
+    box-shadow: 0 12px 32px -4px rgba(70, 69, 85, 0.08);
+  }
+  .primary-gradient {
+    background: linear-gradient(135deg, #3525cd 0%, #4f46e5 100%);
+  }
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Editorial Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c7c4d8; border-radius: 10px; }
