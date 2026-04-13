@@ -17,7 +17,12 @@ function generateJoinCode() {
 router.post('/', auth, async (req, res) => {
   const { name } = req.body;
   try {
-    // Enforce one institution per user
+    // Enforce unique name (case-insensitive)
+    const nameExists = await Institution.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
+    if (nameExists) {
+      return res.status(400).json({ msg: 'An institution with this name already exists.' });
+    }
+
     const existing = await Institution.findOne({ admin_id: req.user.id });
     if (existing) {
       return res.status(400).json({ msg: 'You have already created an institution.' });
