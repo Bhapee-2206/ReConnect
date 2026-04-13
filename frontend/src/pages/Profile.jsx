@@ -55,15 +55,40 @@ export default function Profile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2000000) { // Increased to 2MB
-          alert("Image is too large. Please select an image under 2MB.");
-          return;
-      }
       const reader = new FileReader();
       reader.onloadend = () => {
-        const result = reader.result;
-        setPreviewImage(result);
-        setProfile(prev => ({ ...prev, profile_pic: result }));
+        const img = new Image();
+        img.onload = () => {
+           // Create a canvas to resize/compress
+           const canvas = document.createElement('canvas');
+           const MAX_WIDTH = 400;
+           const MAX_HEIGHT = 400;
+           let width = img.width;
+           let height = img.height;
+
+           if (width > height) {
+             if (width > MAX_WIDTH) {
+               height *= MAX_WIDTH / width;
+               width = MAX_WIDTH;
+             }
+           } else {
+             if (height > MAX_HEIGHT) {
+               width *= MAX_HEIGHT / height;
+               height = MAX_HEIGHT;
+             }
+           }
+
+           canvas.width = width;
+           canvas.height = height;
+           const ctx = canvas.getContext('2d');
+           ctx.drawImage(img, 0, 0, width, height);
+           
+           // Convert to smaller Base64 (JPEG with 0.7 quality)
+           const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+           setPreviewImage(compressedBase64);
+           setProfile(prev => ({ ...prev, profile_pic: compressedBase64 }));
+        };
+        img.src = reader.result;
       };
       reader.readAsDataURL(file);
     }
