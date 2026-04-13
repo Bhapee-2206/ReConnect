@@ -111,8 +111,9 @@ export default function Directory() {
                     {person.profile_pic ? (
                         <img src={person.profile_pic} alt={person.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-surface-container text-outline opacity-40">
-                            <span className="material-symbols-outlined text-6xl">person</span>
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-indigo-50/50 text-indigo-500/20">
+                            <span className="material-symbols-outlined text-7xl">school</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] mt-2">No Image</span>
                         </div>
                     )}
                     <div className="absolute top-4 left-4 flex gap-2">

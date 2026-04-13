@@ -6,7 +6,7 @@ export default function TopNav({ user, profile }) {
 
   const handleLogout = async () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    window.location.href = '/';
   };
 
   const displayName = profile?.name || user?.email || 'User';

@@ -15,7 +15,7 @@ export default function Layout() {
     async function getUser() {
       const token = localStorage.getItem('token');
       if (!token) {
-        navigate('/login');
+        window.location.href = '/';
         setLoading(false);
         return;
       }
