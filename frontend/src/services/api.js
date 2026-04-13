@@ -50,5 +50,6 @@ export const eventService = {
 export const alumniService = {
   getDirectory: (filters) => api.get('/alumni', { params: filters }),
   invite: (email) => api.post('/alumni/invite', { email }),
-  getInvitations: () => api.get('/alumni/invitations')
+  getInvitations: () => api.get('/alumni/invitations'),
+  removeAlumnus: (id) => api.delete(`/alumni/${id}`)
 };

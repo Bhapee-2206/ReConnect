@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { alumniService } from '../services/api';
+import { useOutletContext, useLocation } from 'react-router-dom';
 
 export default function Directory() {
+  const { profile } = useOutletContext();
+  const location = useLocation();
   const [alumni, setAlumni] = useState([]);
   const [loading, setLoading] = useState(true);
   const [batch, setBatch] = useState('All Batches');
@@ -11,10 +14,14 @@ export default function Directory() {
   async function fetchAlumni() {
     setLoading(true);
     try {
+      const searchParams = new URLSearchParams(location.search);
+      const querySearch = searchParams.get('search');
+
       const filters = {};
       if (batch !== 'All Batches') filters.batch = batch;
       if (course !== 'All Courses') filters.course = course;
       if (company !== 'All Companies') filters.company = company;
+      if (querySearch) filters.name = querySearch; // Map search to name for now
 
       const response = await alumniService.getDirectory(filters);
       setAlumni(response.data);
@@ -26,11 +33,23 @@ export default function Directory() {
 
   useEffect(() => {
     fetchAlumni();
-  }, []);
+  }, [location.search]);
 
   const handleFilter = (e) => {
     e.preventDefault();
     fetchAlumni();
+  };
+
+  const handleRemove = async (id) => {
+    if (!window.confirm('Are you sure you want to remove this person from your institution? They will lose access to all institutional events and announcements.')) return;
+    
+    try {
+      await alumniService.removeAlumnus(id);
+      setAlumni(alumni.filter(p => (p._id || p.id) !== id));
+      alert('Alumnus removed successfully.');
+    } catch (err) {
+      alert(err.response?.data?.msg || 'Error removing alumnus');
+    }
   };
 
   return (
@@ -81,15 +100,25 @@ export default function Directory() {
       </section>
 
       {loading ? (
-        <div>Loading alumni...</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {[1,2,3,4].map(i => <div key={i} className="bg-surface-container-low h-80 animate-pulse rounded-[2rem]"></div>)}
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {alumni.map((person) => (
-            <div key={person.id} className="group bg-surface-container-lowest rounded-[2rem] p-4 transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/10 editorial-shadow">
+            <div key={person.id || person._id} className="group bg-surface-container-lowest rounded-[2rem] p-4 transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/10 editorial-shadow">
                 <div className="relative overflow-hidden rounded-2xl aspect-[4/5] mb-6 bg-slate-200">
-                    <div className="absolute top-4 left-4">
+                    <div className="absolute top-4 left-4 flex gap-2">
                         <span className="bg-tertiary-container text-tertiary-fixed text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">{person.role}</span>
                     </div>
+                    {profile?.role === 'college_admin' && (person._id || person.id) !== profile?.id && (
+                      <button 
+                        onClick={() => handleRemove(person._id || person.id)}
+                        className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-error-container text-on-error-container rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0"
+                      >
+                        <span className="material-symbols-outlined text-sm">person_remove</span>
+                      </button>
+                    )}
                 </div>
                 <div className="px-2 pb-2">
                     <h3 className="text-xl font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">{person.name || 'Unknown User'}</h3>

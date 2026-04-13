@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { announcementService, eventService, alumniService } from '../services/api';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ alumni: 0, events: 0, announcements: 0 });
   const [loading, setLoading] = useState(true);
   const { profile } = useOutletContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadStats() {
@@ -49,10 +50,16 @@ export default function Dashboard() {
             <h2 className="text-3xl font-black leading-tight tracking-tight">Welcome back. Your network is waiting.</h2>
             <p className="text-indigo-100 text-sm leading-relaxed font-medium">There are new opportunities and networking events matching your profile today. Ready to reconnect?</p>
             <div className="flex gap-3 pt-2">
-                <button className="px-6 py-3 bg-white text-indigo-700 rounded-lg font-bold text-xs shadow-xl hover:scale-[0.98] transition-transform">
+                <button 
+                  onClick={() => navigate('/events')}
+                  className="px-6 py-3 bg-white text-indigo-700 rounded-lg font-bold text-xs shadow-xl hover:scale-[0.98] transition-transform"
+                >
                     View Opportunities
                 </button>
-                <button className="px-6 py-3 bg-indigo-600/50 text-white rounded-lg font-bold text-xs backdrop-blur-md border border-white/20 hover:bg-indigo-600 transition-colors">
+                <button 
+                  onClick={() => navigate('/profile')}
+                  className="px-6 py-3 bg-indigo-600/50 text-white rounded-lg font-bold text-xs backdrop-blur-md border border-white/20 hover:bg-indigo-600 transition-colors"
+                >
                     Update Profile
                 </button>
             </div>

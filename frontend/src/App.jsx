@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Auth from './pages/Auth';
+import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import Directory from './pages/Directory';
 import Announcements from './pages/Announcements';
@@ -10,13 +11,15 @@ import AdminManagement from './pages/AdminManagement';
 import Layout from './components/Layout';
 
 function App() {
+  const isAuthenticated = !!localStorage.getItem('token');
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Auth />} />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Landing />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Auth />} />
         
         <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="onboarding" element={<Onboarding />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="admin" element={<AdminManagement />} />
