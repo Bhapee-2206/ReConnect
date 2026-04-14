@@ -138,6 +138,15 @@ export default function Directory() {
                             <span className="block text-xs font-semibold">{person.batch || 'N/A'}</span>
                         </div>
                     </div>
+                    {profile?.role === 'college_admin' && person.role !== 'college_admin' && (
+                        <button 
+                            onClick={() => handleRemove(person.id || person._id)} 
+                            className="w-full mt-4 py-2 bg-error-container text-on-error-container text-xs font-bold rounded-lg hover:bg-error hover:text-white transition-colors flex items-center justify-center gap-1"
+                        >
+                            <span className="material-symbols-outlined text-[14px]">delete</span>
+                            Remove Member
+                        </button>
+                    )}
                 </div>
             </div>
           ))}

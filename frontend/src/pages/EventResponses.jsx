@@ -37,6 +37,37 @@ export default function EventResponses({ event, onClose }) {
         ? Object.keys(responses[0].form_responses).map(key => ({ id: key, label: key.replace(/_/g, ' ') })) 
         : []);
 
+  const handleExportCSV = () => {
+    if (responses.length === 0) return;
+    
+    const csvHeaders = ['Participant', 'Email', ...headers.map(h => h.label), 'Submitted At'];
+    
+    const csvRows = responses.map(res => {
+      const participant = `"${(res.user_id?.name || 'Guest').replace(/"/g, '""')}"`;
+      const email = `"${(res.email || '').replace(/"/g, '""')}"`;
+      
+      const customAnswers = headers.map(h => {
+        let val = res.form_responses && res.form_responses[h.id] ? res.form_responses[h.id] : '';
+        if (Array.isArray(val)) val = val.join('; ');
+        return `"${String(val).replace(/"/g, '""')}"`;
+      });
+      
+      const submittedAt = `"${new Date(res.created_at).toLocaleString()}"`;
+      
+      return [participant, email, ...customAnswers, submittedAt].join(',');
+    });
+    
+    const csvContent = [csvHeaders.join(','), ...csvRows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${event.title.replace(/\s+/g, '_')}_responses.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md z-[150] flex items-center justify-center p-4 md:p-10">
       <div className="bg-surface-container-lowest w-full max-w-6xl h-full max-h-[90vh] rounded-[2.5rem] overflow-hidden flex flex-col editorial-shadow">
@@ -87,7 +118,7 @@ export default function EventResponses({ event, onClose }) {
               <section>
                 <div className="flex justify-between items-end mb-6">
                   <h3 className="text-xl font-bold">Detailed Submissions</h3>
-                  <button className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                  <button onClick={handleExportCSV} className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
                     <span className="material-symbols-outlined text-sm">download</span>
                     Export CSV
                   </button>
