@@ -57,12 +57,14 @@ export default function Sidebar({ profile }) {
         </NavLink>
       </nav>
       <div className="mt-auto border-t border-slate-200 pt-4 space-y-1">
-        <button 
-          onClick={handleInvite}
-          className="w-full mb-4 py-3 bg-indigo-700 text-white rounded-lg font-bold text-sm shadow-sm hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer"
-        >
-          Invite
-        </button>
+        {isAdmin && hasInstitution && (
+          <button 
+            onClick={() => navigate('/admin')}
+            className="w-full mb-4 py-3 bg-indigo-700 text-white rounded-lg font-bold text-sm shadow-sm hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer"
+          >
+            Invite
+          </button>
+        )}
         <a href="#" className="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-indigo-600 text-sm transition-all">
           <span className="material-symbols-outlined text-lg">contact_support</span>
           <span>Support</span>

@@ -44,7 +44,9 @@ export const announcementService = {
 export const eventService = {
   getAll: () => api.get('/events'),
   create: (data) => api.post('/events', data),
-  register: (id) => api.post(`/events/${id}/register`)
+  update: (id, data) => api.put(`/events/${id}`, data),
+  register: (id, responses) => api.post(`/events/${id}/register`, { form_responses: responses }),
+  getResponses: (id) => api.get(`/events/${id}/responses`),
 };
 
 export const alumniService = {

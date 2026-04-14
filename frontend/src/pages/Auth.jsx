@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { authService, institutionService } from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // mode: 'login' | 'register' | 'join'
 export default function Auth() {
-  const [mode, setMode] = useState('login');
+  const [searchParams] = useSearchParams();
+  const initialMode = searchParams.get('mode');
+  const [mode, setMode] = useState(initialMode === 'register' || initialMode === 'join' ? initialMode : 'login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [joinCode, setJoinCode] = useState('');
